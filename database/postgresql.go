@@ -10,7 +10,7 @@ import (
 type Postgresql struct {
 	Name     string
 	Host     string
-	Port     int
+	Port     uint
 	User     string
 	Password string
 }
