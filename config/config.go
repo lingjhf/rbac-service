@@ -15,6 +15,8 @@ type Config struct {
 
 	//数据库配置
 	DB_TYPE            string //sqlite, postgresql, mysql
+	DB_HOST            string
+	DB_PORT            uint
 	DB_NAME            string //数据库名称
 	DB_USER            string
 	DB_PASSWD          string
