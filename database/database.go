@@ -1,11 +1,9 @@
 package database
 
-import "gorm.io/gorm"
-
-type Database interface {
-	Connect() (*gorm.DB, error)
+type Database[T any] interface {
+	Connect() (T, error)
 }
 
-func New[T Database](config T) T {
+func New[R any](config Database[R]) Database[R] {
 	return config
 }
