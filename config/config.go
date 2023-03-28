@@ -22,6 +22,14 @@ type Config struct {
 	DB_PASSWD          string
 	DB_CONNECT_RETRY   uint
 	DB_CONNECT_TIMEOUT uint //毫秒为单位
+
+	//缓存配置
+	CACHE_TYPE   string //redis
+	CACHE_HOST   string
+	CACHE_PORT   uint
+	CACHE_DB     uint
+	CACHE_USER   string
+	CACHE_PASSWD string
 }
 
 func New() (*Config, error) {
