@@ -1,6 +1,7 @@
 package services
 
 import (
+	"rbac-service/cache"
 	"rbac-service/config"
 	"rbac-service/dao"
 
@@ -18,6 +19,7 @@ type Service struct {
 	Config *config.Config
 	App    *fiber.App
 	Dao    dao.Dao
+	Cache  cache.Cache
 }
 
 func New[T Servicer](s T) T {
