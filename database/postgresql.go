@@ -2,10 +2,21 @@ package database
 
 import (
 	"fmt"
+	"rbac-service/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+func NewPostgresqlWithConfig(config *config.Config) Database[*gorm.DB] {
+	return &Postgresql{
+		Host:     config.DB_HOST,
+		Port:     config.DB_PORT,
+		Name:     config.DB_NAME,
+		User:     config.DB_USER,
+		Password: config.DB_PASSWD,
+	}
+}
 
 type Postgresql struct {
 	Name     string
