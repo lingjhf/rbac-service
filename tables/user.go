@@ -10,17 +10,17 @@ type User struct {
 
 type UserTenancy struct {
 	Base
-	UserId    string  `gorm:"type:varchar(32);not null;uniqueIndex:idx_user_tenancy;"`
-	TenancyId string  `gorm:"type:varchar(32);not null;uniqueIndex:idx_user_tenancy;"`
+	UserId    string  `gorm:"type:varchar(36);not null;uniqueIndex:idx_user_tenancy;"`
+	TenancyId string  `gorm:"type:varchar(36);not null;uniqueIndex:idx_user_tenancy;"`
 	User      User    `gorm:"foreignKey:Id;references:UserId;constraint:OnDelete:CASCADE;"`
 	Tenancy   Tenancy `gorm:"foreignKey:Id;references:TenancyId;constraint:OnDelete:CASCADE;"`
 }
 
 type UserRole struct {
 	Base
-	UserId    string  `gorm:"type:varchar(32);not null;uniqueIndex:idx_user_role;"`
-	RoleId    string  `gorm:"type:varchar(32);not null;uniqueIndex:idx_user_role;"`
-	TenancyId string  `gorm:"type:varchar(32);not null;uniqueIndex:idx_user_role;"`
+	UserId    string  `gorm:"type:varchar(36);not null;uniqueIndex:idx_user_role;"`
+	RoleId    string  `gorm:"type:varchar(36);not null;uniqueIndex:idx_user_role;"`
+	TenancyId string  `gorm:"type:varchar(36);not null;uniqueIndex:idx_user_role;"`
 	User      User    `gorm:"foreignKey:Id;references:UserId;constraint:OnDelete:CASCADE;"`
 	Role      Role    `gorm:"foreignKey:Id;references:RoleId;constraint:OnDelete:CASCADE;"`
 	Tenancy   Tenancy `gorm:"foreignKey:Id;references:TenancyId;constraint:OnDelete:CASCADE;"`
