@@ -2,10 +2,10 @@ package tables
 
 type User struct {
 	Base
-	Name     string `gorm:"unique;"`
-	Password string `gorm:"not null;"`
-	Email    string `gorm:"unique;default:'';"`
-	Phone    string `gorm:"unique;default:'';"`
+	Username string `gorm:"type:varchar(32);index;unique;not null;"`
+	Password string `gorm:"type:varchar(70);not null;"`
+	Email    string `gorm:"type:varchar(254);index;not null;default:'';"`
+	Phone    string `gorm:"type:varchar(20);index;not null;default:'';"`
 }
 
 type UserTenancy struct {
