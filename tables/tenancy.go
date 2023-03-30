@@ -3,7 +3,9 @@ package tables
 type Tenancy struct {
 	Base
 	Name     string   `gorm:"not null"`
+	Owner    string   `gorm:"type:varchar(36);not null;"`
 	ParentId *string  `gorm:"varchar(36)"`
+	User     *User    `gorm:"foreignKey:Id;references:Owner;constraint:OnDelete:CASCADE;"`
 	Parent   *Tenancy `gorm:"foreignkey:ParentId"`
 }
 
