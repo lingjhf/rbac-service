@@ -17,14 +17,14 @@ func New[R any](config Database[R]) Database[R] {
 	return config
 }
 
-func ConnectDatabase(config *config.Config) (*gorm.DB, error) {
+func ConnectDatabase(config *config.Config, opts ...gorm.Option) (*gorm.DB, error) {
 	var db *gorm.DB
 	var databaseConfig Database[*gorm.DB]
 	switch config.DB_TYPE {
 	case "sqlite":
-		databaseConfig = NewSqliteWithConfig(config)
+		databaseConfig = NewSqliteWithConfig(config, opts...)
 	case "postgresql":
-		databaseConfig = NewPostgresqlWithConfig(config)
+		databaseConfig = NewPostgresqlWithConfig(config, opts...)
 	default:
 		return nil, errors.New("DB_TYPE必须是sqlite或者postgresql")
 	}
