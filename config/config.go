@@ -33,6 +33,7 @@ type Config struct {
 
 	//jwt
 	JWT_SECRET_KEY string
+	JWT_EXPIRATION uint
 }
 
 func New() (*Config, error) {
