@@ -30,6 +30,9 @@ type Config struct {
 	CACHE_DB     uint
 	CACHE_USER   string
 	CACHE_PASSWD string
+
+	//jwt
+	JWT_SECRET_KEY string
 }
 
 func New() (*Config, error) {
