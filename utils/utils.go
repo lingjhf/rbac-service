@@ -5,6 +5,9 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v2/jwt"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -42,4 +45,34 @@ func CreateTablesIfNotExists(db *gorm.DB, tables ...interface{}) error {
 		}
 	}
 	return nil
+}
+
+func GeneratePasswordHash(password string) string {
+	hash, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(hash)
+}
+
+func ComparePasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func GenerateJwtWithKey(payload map[string]any, key string, expiration time.Duration) (string, error) {
+	builder := jwt.NewBuilder().Expiration(time.Now().Add(expiration))
+	for key, value := range payload {
+		builder.Claim(key, value)
+	}
+	token, err := builder.Build()
+	if err != nil {
+		return "", err
+	}
+	jwtBytes, err := jwt.Sign(token, jwt.WithKey(jwa.HS256, []byte(key)))
+	if err != nil {
+		return "", err
+	}
+	return string(jwtBytes), nil
+}
+
+func ParseJwtWithKey(jwtString, key string) (jwt.Token, error) {
+	return jwt.Parse([]byte(jwtString), jwt.WithKey(jwa.HS256, []byte(key)))
 }

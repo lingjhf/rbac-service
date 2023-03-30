@@ -23,6 +23,7 @@ func main() {
 
 func runService(service *services.Service) {
 	services.New(service).
+		NewAuthService().
 		NewTenancyService().
 		NewUserService().
 		NewRoleService().
