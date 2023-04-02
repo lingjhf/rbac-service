@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -75,4 +76,22 @@ func GenerateJwtWithKey(payload map[string]any, key string, expiration time.Dura
 
 func ParseJwtWithKey(jwtString, key string) (jwt.Token, error) {
 	return jwt.Parse([]byte(jwtString), jwt.WithKey(jwa.HS256, []byte(key)))
+}
+
+func GetOffsetLimit(page, limit uint) (uint, uint) {
+	if limit <= 0 {
+		limit = 10
+	}
+	if page > 1 {
+		return (page - 1) * limit, limit
+	}
+	return 0, limit
+}
+
+func IsString(s interface{}) error {
+	_, ok := s.(string)
+	if !ok {
+		return errors.New("must be a string")
+	}
+	return nil
 }
