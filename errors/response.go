@@ -30,6 +30,13 @@ func BodyParserError(c *fiber.Ctx, message any) error {
 	})
 }
 
+func QueryParserError(c *fiber.Ctx, message any) error {
+	return c.JSON(&JSONResponse{
+		Code:    ErrQueryParser.Code,
+		Message: message,
+	})
+}
+
 func ParameterError(c *fiber.Ctx, message any) error {
 	return c.JSON(&JSONResponse{
 		Code:    ErrParameter.Code,
