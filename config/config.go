@@ -34,6 +34,9 @@ type Config struct {
 	//jwt
 	JWT_SECRET_KEY string
 	JWT_EXPIRATION uint
+
+	ALLOW_USER_SIGNUP        bool //是否允许用户自行注册
+	ALLOW_USER_CREATE_TENANT bool //是否允许用户自行创建租户
 }
 
 func New() (*Config, error) {
