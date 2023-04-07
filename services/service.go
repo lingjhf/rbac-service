@@ -8,8 +8,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type ContextKey string
+
 type Servicer interface {
-	NewTenancyService() Servicer
+	NewTenantService() Servicer
 	NewUserService() Servicer
 	NewRoleService() Servicer
 	NewPermissionService() Servicer

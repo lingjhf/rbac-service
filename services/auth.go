@@ -12,14 +12,18 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwt"
 )
 
-type ContextKey string
+const (
+	SignupRouteName        = "auth.signup"
+	SigninRouteName        = "auth.signin"
+	ResetPasswordRouteName = "auth.resetPassword"
+)
 
 func (s *Service) NewAuthService() Servicer {
 	s.App.Route("/auth", func(router fiber.Router) {
-		router.Post("/signup", s.Signup).Name("signup")
-		router.Post("/signin", s.Signin).Name("signin")
-		router.Use(s.RequiredSignin).Post("/reset_password", s.ResetPassword).Name("resetPassword")
-	}, "auth.")
+		router.Post("/signup", s.Signup).Name(SignupRouteName)
+		router.Post("/signin", s.Signin).Name(SigninRouteName)
+		router.Use(s.RequiredSignin).Post("/reset_password", s.ResetPassword).Name(ResetPasswordRouteName)
+	})
 	return s
 }
 
@@ -231,5 +235,39 @@ func (s *Service) RequiredSignin(c *fiber.Ctx) error {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, ContextKey("user"), user)
 	c.SetUserContext(ctx)
+	return c.Next()
+}
+
+// RequiredPermission 检查用户是否有权限
+// owner是租户的拥有者，拥有所有权限
+func (s *Service) RequiredPermission(c *fiber.Ctx) error {
+	headers := c.GetReqHeaders()
+	tenantId, ok := headers["Tenant"]
+	if !ok {
+		if s.Config.ALLOW_USER_CREATE_TENANT && c.Route().Name == CreateTenantRouteName {
+			return c.Next()
+		}
+		return errors.UnauthorizedError(c)
+	}
+	user := c.UserContext().Value(ContextKey("user")).(*tables.User)
+	tenant, err := s.Dao.GetTenantByIdWithOwner(tenantId, user.Id)
+	if err != nil {
+		return errors.DatabaseError(c)
+	}
+	if tenant != nil {
+		ctx := c.UserContext()
+		ctx = context.WithValue(ctx, ContextKey("tenantId"), tenant.Id)
+		c.SetUserContext(ctx)
+		return c.Next()
+	}
+
+	userTenant, err := s.Dao.GetUserTenantByUnique(user.Id, tenantId)
+	if err != nil {
+		return errors.DatabaseError(c)
+	}
+	if userTenant == nil {
+		return errors.UnauthorizedError(c)
+	}
+	//TODO: 判断接口权限
 	return c.Next()
 }
