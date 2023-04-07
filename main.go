@@ -24,7 +24,7 @@ func main() {
 func runService(service *services.Service) {
 	services.New(service).
 		NewAuthService().
-		NewTenancyService().
+		NewTenantService().
 		NewUserService().
 		NewRoleService().
 		NewPermissionService()
@@ -49,12 +49,12 @@ func createDao(config *config.Config) dao.Dao {
 	}
 	utils.CreateTablesIfNotExists(
 		db,
-		&tables.Tenancy{},
-		&tables.TenancyTree{},
 		&tables.User{},
+		&tables.Tenant{},
+		&tables.TenantTree{},
 		&tables.Role{},
 		&tables.Permission{},
-		&tables.UserTenancy{},
+		&tables.UserTenant{},
 		&tables.UserRole{},
 		&tables.RolePermission{},
 	)
