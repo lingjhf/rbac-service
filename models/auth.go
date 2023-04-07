@@ -40,7 +40,7 @@ type (
 func (s *SignupWithPhone) Validate() error {
 	return validation.ValidateStruct(s,
 		validation.Field(&s.Username, validation.Required, validation.Length(1, 32)),
-		validation.Field(&s.Phone, validation.Required, validation.Length(0, 20)),
+		validation.Field(&s.Phone, validation.Required, validation.Length(1, 20)),
 		validation.Field(&s.Password, validation.Required, validation.Length(6, 32)),
 	)
 }
@@ -62,7 +62,7 @@ func (s *SigninWithUsername) Validate() error {
 
 func (s *SigninWithPhone) Validate() error {
 	return validation.ValidateStruct(s,
-		validation.Field(&s.Phone, validation.Required, validation.Length(0, 20)),
+		validation.Field(&s.Phone, validation.Required, validation.Length(1, 20)),
 	)
 }
 
