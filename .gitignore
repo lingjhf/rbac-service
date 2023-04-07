@@ -1,3 +1,4 @@
 *.db
 docker-compose.yml
 config.yml
+.vscode/launch.json
