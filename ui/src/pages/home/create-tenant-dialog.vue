@@ -68,7 +68,6 @@ function cancel() {
 }
 
 async function confirm(formEl: FormInstance | undefined) {
-  confirmLoading.value = true
   if (!formEl) return
   try {
     await formEl.validate((valid) => {
@@ -79,6 +78,7 @@ async function confirm(formEl: FormInstance | undefined) {
   } catch (e) {
     return
   }
+  confirmLoading.value = true
   try {
     await createTenant(form.value)
   } catch (e) {
