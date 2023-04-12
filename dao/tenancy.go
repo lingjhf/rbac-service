@@ -217,3 +217,37 @@ func (d *DatabaseDao) GetTenantTree(ancestorId, descendantId string) (*tables.Te
 	return tenantTree, err
 
 }
+
+func (d *DatabaseDao) GetRootTenantListByUser(userId string, offset, limit uint) ([]*tables.Tenant, error) {
+	tenant := &tables.Tenant{}
+	userTenant := tables.UserTenant{}
+	tenantTableName := tenant.TableName()
+	userTenantTablelName := userTenant.TableName()
+	tenantList := []*tables.Tenant{}
+	err := d.DB.
+		Model(tenant).
+		Joins(
+			fmt.Sprintf(
+				"join %s on %s.tenant_id = %s.id",
+				userTenantTablelName,
+				userTenantTablelName,
+				tenantTableName,
+			),
+		).
+		Where(
+			fmt.Sprintf(
+				"%s.parent_id is null and  %s.user_id = ?",
+				tenantTableName,
+				userTenantTablelName,
+			),
+			userId,
+		).
+		Offset(int(offset)).
+		Limit(int(limit)).
+		Find(&tenantList).Error
+	if err != nil {
+		return nil, err
+	}
+	return tenantList, nil
+
+}

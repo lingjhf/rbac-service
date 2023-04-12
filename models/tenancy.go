@@ -10,7 +10,7 @@ import (
 type (
 	CreateTenantForm struct {
 		Name     string  `json:"name"`
-		ParentId *string `json:"parent_id"`
+		ParentId *string `json:"parentId"`
 	}
 	UpdateTenantForm map[string]any
 	TenantQuery      struct {
@@ -21,7 +21,7 @@ type (
 	TenantItem struct {
 		Id       string  `json:"id"`
 		Name     string  `json:"name"`
-		ParentId *string `json:"parent_id"`
+		ParentId *string `json:"parentId"`
 	}
 	TenantList []TenantItem
 )
@@ -38,8 +38,8 @@ func (f *CreateTenantForm) Validate() error {
 func (f *UpdateTenantForm) Validate() error {
 	return validation.Validate(*f, validation.Map(
 		validation.Key("name", validation.By(utils.IsString), validation.Length(1, 32)).Optional(),
-		validation.Key("parent_id",
-			validation.When((*f)["parent_id"] != nil, validation.By(utils.IsString), validation.Length(36, 36)).
+		validation.Key("parentId",
+			validation.When((*f)["parentId"] != nil, validation.By(utils.IsString), validation.Length(36, 36)).
 				Else(validation.Nil),
 		).Optional(),
 	).AllowExtraKeys())

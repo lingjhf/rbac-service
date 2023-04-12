@@ -10,10 +10,11 @@ import (
 )
 
 const (
-	CreateTenantRouteName  = "tenant.create_tenant"
-	GetTenantListRouteName = "tenant.get_tenant_list"
-	UpdateTenantRouteName  = "tenant.update_tenant"
-	GetTenantByIdRouteName = "tenant.get_tenant_by_id"
+	CreateTenantRouteName      = "tenant.create_tenant"
+	GetTenantListRouteName     = "tenant.get_tenant_list"
+	GetRootTenantListRouteName = "tenant.get_root_tenant_list"
+	UpdateTenantRouteName      = "tenant.update_tenant"
+	GetTenantByIdRouteName     = "tenant.get_tenant_by_id"
 )
 
 func (s *Service) NewTenantService() Servicer {
@@ -21,6 +22,7 @@ func (s *Service) NewTenantService() Servicer {
 		router.Use(s.RequiredSignin)
 		router.Post("/create", s.RequiredPermission, s.CreateTenant).Name(CreateTenantRouteName)
 		router.Get("/list", s.RequiredPermission, s.GetTenantList).Name(GetTenantListRouteName)
+		router.Get("/root/list", s.GetRootTenantListByUser).Name(GetRootTenantListRouteName)
 		router.Put("/:id", s.RequiredPermission, s.UpdateTenant).Name(UpdateTenantRouteName)
 		router.Get("/:id", s.RequiredPermission, s.GetTenantById).Name(GetTenantByIdRouteName)
 	})
@@ -49,7 +51,7 @@ func (s *Service) CreateTenant(c *fiber.Ctx) error {
 			return errors.DatabaseError(c)
 		}
 		if tenantTreeExists == nil {
-			return errors.ParameterError(c, errors.Message("parent_id", "父级租户不存在"))
+			return errors.ParameterError(c, errors.Message("parentId", "父级租户不存在"))
 		}
 	}
 	tenantExists, err := s.Dao.GetTenantByNameWithParent(form.Name, form.ParentId)
@@ -115,14 +117,14 @@ func (s *Service) CompareName(c *fiber.Ctx, form models.UpdateTenantForm, origin
 }
 
 func (s *Service) CompareParentId(c *fiber.Ctx, form models.UpdateTenantForm, contextTenantId string, originTenant *tables.Tenant, updateMap models.UpdateMap) error {
-	if parentId, ok := form["parent_id"]; ok && parentId != originTenant.ParentId {
+	if parentId, ok := form["parentId"]; ok && parentId != originTenant.ParentId {
 		if parentId != nil {
 			tenantTreeExists, err := s.Dao.GetTenantTree(contextTenantId, parentId.(string))
 			if err != nil {
 				return errors.DatabaseError(c)
 			}
 			if tenantTreeExists == nil {
-				return errors.ParameterError(c, errors.Message("parent_id", "父级租户不存在"))
+				return errors.ParameterError(c, errors.Message("parentId", "父级租户不存在"))
 			}
 		}
 		var tenantExists *tables.Tenant
@@ -193,4 +195,23 @@ func (s *Service) GetTenantList(c *fiber.Ctx) error {
 		"list":  new(models.TenantList).FormTable(tenantList),
 		"total": count,
 	})
+}
+
+// GetRootTenantListByUser 根据用户获取根租户
+func (s *Service) GetRootTenantListByUser(c *fiber.Ctx) error {
+	query := &models.TenantQuery{}
+	if err := c.QueryParser(query); err != nil {
+		return errors.QueryParserError(c, err.Error())
+	}
+	user := c.UserContext().Value(ContextKey("user")).(*tables.User)
+	offset, limit := utils.GetOffsetLimit(query.Page, query.Limit)
+	tenantList, err := s.Dao.GetRootTenantListByUser(user.Id, offset, limit)
+	if err != nil {
+		return errors.DatabaseError(c)
+	}
+	return errors.SucceededWithData(c, map[string]any{
+		"list": new(models.TenantList).FormTable(tenantList),
+		// "total": count,
+	})
+
 }

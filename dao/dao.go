@@ -30,6 +30,7 @@ type Dao interface {
 	GetTenantCountByOwner(owner string) (int64, error)
 	GetTenantJoinTenantTreeOnDescendant(ancestorId, descendantId string) (*tables.Tenant, error)
 	GetTenantTree(ancestorId, descendantId string) (*tables.TenantTree, error)
+	GetRootTenantListByUser(userId string, offset, limit uint) ([]*tables.Tenant, error)
 	GetUserById(id string) (*tables.User, error)
 	GetUserByUsername(username string) (*tables.User, error)
 	GetUserByEmail(email string) (*tables.User, error)
