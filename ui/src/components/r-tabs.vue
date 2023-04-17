@@ -17,6 +17,9 @@ const props = defineProps(tabsProps)
 const emit = defineEmits(tabsEmits)
 const currentTab = ref<TabPaneName | undefined>('')
 provide('currentTab', currentTab)
+provide('onClose', (name: TabPaneName) => {
+  emit('tabRemove', name)
+})
 watch(
   () => props.modelValue,
   () => {
