@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  postgres-service:
+    image: postgres:14.0
+    container_name: postgres-service
+    restart: always
+    environment:
+      POSTGRES_USER: rbac
+      POSTGRES_PASSWORD: rbac123
+      POSTGRES_DB: rbac
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+  redis-service:
+    image: redis:7-alpine
+    container_name: redis-service
+    command: sh -c "redis-server /usr/local/etc/redis/redis.conf"
+    restart: always
+    ports:
+      - "6380:6380"
+    volumes:
+      - ./conf/redis:/usr/local/etc/redis
+  rabbitmq-service:
+    image: rabbitmq:3.11.7-alpine
+    container_name: rabbitmq-service
+    ports:
+      - "5672:5672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=lingj
+      - RABBITMQ_DEFAULT_PASS=lingj123
