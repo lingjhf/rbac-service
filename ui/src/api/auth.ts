@@ -11,6 +11,10 @@ export interface LoginWithUsername {
   password: string
 }
 
+export interface LoginResponseData {
+  token: string
+}
+
 export async function Signup(
   type: 'email' | 'phone',
   data: SignupWithEmailData
@@ -21,6 +25,10 @@ export async function Signup(
 export async function Login(
   type: 'username' | 'email',
   data: LoginWithUsername
-) {
-  return await axios.post(`/auth/signin?type=${type}`, data)
+): Promise<LoginResponseData> {
+  const responseData = (await axios.post(
+    `/auth/signin?type=${type}`,
+    data
+  )) as never
+  return responseData
 }

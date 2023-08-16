@@ -45,9 +45,9 @@ func (f *UpdateTenantForm) Validate() error {
 	).AllowExtraKeys())
 }
 
-func (t *TenantList) FormTable(tenant []*tables.Tenant) *TenantList {
+func (t TenantList) FormTable(tenant []*tables.Tenant) TenantList {
 	for _, item := range tenant {
-		*t = append(*t, TenantItem{Id: item.Id, Name: item.Name, ParentId: item.ParentId})
+		t = append(t, TenantItem{Id: item.Id, Name: item.Name, ParentId: item.ParentId})
 	}
 	return t
 }

@@ -53,4 +53,7 @@ const events = {
 .tab-content:deep() .el-tabs__item {
   padding: 0 !important ;
 }
+.tab-content:deep() .el-tab-pane {
+  height: 100%;
+}
 </style>

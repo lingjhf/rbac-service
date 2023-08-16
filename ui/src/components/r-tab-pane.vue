@@ -7,21 +7,19 @@
           class="h-full text-xs w-full"
           @mouseenter="labelEnter"
           @mouseleave="labelLeave"
+          @contextmenu.prevent
         >
-          <div
-            v-if="props.name === currentTab || closeVisible"
-            class="flex h-full w-full pl-3 items-center"
-          >
-            {{ props.label }}
+          <div class="flex h-full pr-7 pl-3 w-full-2 items-center relative">
+            <slot name="labelText">
+              {{ props.label }}
+            </slot>
             <div
-              class="rounded flex h-5 mx-1 w-5 items-center justify-center tab-close"
+              v-if="props.name === currentTab || closeVisible"
+              class="rounded flex h-5 mx-1 right-0 w-5 items-center justify-center tab-close absolute"
               @click.stop="close"
             >
               <div class="i-local:close" />
             </div>
-          </div>
-          <div v-else class="flex h-full pr-7 pl-3 w-full-2 items-center">
-            {{ props.label }}
           </div>
         </div>
       </slot>

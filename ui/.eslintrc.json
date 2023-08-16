@@ -6,8 +6,8 @@
       "rules": {
         "quotes": ["error", "single"],
         "semi": ["error", "never"],
-        "linebreak-style": ["error", "unix"],
-        "max-len": ["error", { "code": 80 }]
+        "linebreak-style": ["error", "unix"]
+        // "max-len": ["error", { "code": 80 }]
       }
     },
     {

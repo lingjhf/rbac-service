@@ -6,7 +6,7 @@
       --el-input-text-color: var(--text-color);
       --el-input-focus-border-color: var(--primary-color);
       --el-input-hover-border-color: var(--primary-color);
-      --el-input-bg-color: var(--sidebar-input-bg-color);
+      --el-input-bg-color: var(--input-bg-color);
       --el-input-border-color: none;
     "
   />

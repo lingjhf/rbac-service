@@ -2,6 +2,16 @@
   <div class="relative" :style="styles">
     <slot />
     <div
+      v-show="props.top && props.height !== undefined"
+      class="cursor-n-resize h-1 -top-[2px] right-0 left-0 select-none absolute"
+      :style="resizableStyles"
+      @mouseenter="enterResizable"
+      @mouseleave="leaveResizable"
+      @mousedown="startMoveTop"
+    >
+      <slot name="top" />
+    </div>
+    <div
       v-show="props.right && props.width !== undefined"
       class="cursor-e-resize top-0 -right-[2px] bottom-0 w-1 select-none absolute"
       :style="resizableStyles"
@@ -30,13 +40,11 @@ import { onMove } from '@/utils'
 
 const props = defineProps<{
   width?: number
-  minWidth?: number
-  maxWidth?: number
   height?: number
-  minHeight?: number
-  maxHeight?: number
+  top?: boolean
   right?: boolean
   bottom?: boolean
+  left?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -44,36 +52,14 @@ const emit = defineEmits<{
   (e: 'update:height', value: number): void
 }>()
 
-const width = ref(0)
-const height = ref(0)
 const isResizing = ref(false)
 const isEnterResizable = ref(false)
 let isLeaveResizable = true
 
-watch(
-  () => props.width,
-  () => {
-    if (props.width !== undefined) {
-      width.value = props.width
-    }
-  },
-  { immediate: true }
-)
-
-watch(
-  () => props.height,
-  () => {
-    if (props.height !== undefined) {
-      height.value = props.height
-    }
-  },
-  { immediate: true }
-)
-
 const styles = computed(() => {
   let s = ''
   if (props.width !== undefined) {
-    s += `width:${width.value}px;`
+    s += `width:${props.width}px;`
   }
   if (props.height !== undefined) {
     s += `height:${props.height}px;`
@@ -102,20 +88,14 @@ function leaveResizable() {
 }
 
 function startMoveX(e: MouseEvent) {
-  const originWidth = width.value
+  const originWidth = props.width
+  if (originWidth === undefined) return
   const startPageX = e.pageX
   isResizing.value = true
   onMove({
     update(e) {
-      const tempWidth = originWidth + e.pageX - startPageX
-      if (props.maxWidth !== undefined && tempWidth > props.maxWidth) {
-        width.value = props.maxWidth
-      } else if (props.minWidth !== undefined && tempWidth < props.minWidth) {
-        width.value = props.minWidth
-      } else {
-        width.value = tempWidth
-      }
-      emit('update:width', width.value)
+      const width = originWidth + e.pageX - startPageX
+      emit('update:width', width)
     },
     end() {
       isResizing.value = false
@@ -124,23 +104,30 @@ function startMoveX(e: MouseEvent) {
 }
 
 function startMoveY(e: MouseEvent) {
-  const originHeight = height.value
+  const originHeight = props.height
+  if (originHeight === undefined) return
   const startPageY = e.pageY
   isResizing.value = true
   onMove({
     update(e) {
-      const tempHeight = originHeight + e.pageY - startPageY
-      if (props.maxHeight !== undefined && tempHeight > props.maxHeight) {
-        height.value = props.maxHeight
-      } else if (
-        props.minHeight !== undefined &&
-        tempHeight < props.minHeight
-      ) {
-        height.value = props.minHeight
-      } else {
-        height.value = tempHeight
-      }
-      emit('update:height', height.value)
+      const height = originHeight + e.pageY - startPageY
+      emit('update:height', height)
+    },
+    end() {
+      isResizing.value = false
+    },
+  })
+}
+
+function startMoveTop(e: MouseEvent) {
+  const originHeight = props.height
+  if (originHeight === undefined) return
+  const startPageY = e.pageY
+  isResizing.value = true
+  onMove({
+    update(e) {
+      const height = originHeight - (e.pageY - startPageY)
+      emit('update:height', height)
     },
     end() {
       isResizing.value = false

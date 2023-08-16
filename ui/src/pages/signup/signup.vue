@@ -1,24 +1,25 @@
 <template>
-  <div class="flex h-screen items-center justify-center">
+  <div class="flex h-full w-full items-center justify-center">
     <el-form label-position="top" :model="form">
       <el-form-item label="用户名">
-        <el-input v-model="form.username" />
+        <r-input v-model="form.username" />
       </el-form-item>
       <el-form-item label="邮箱">
-        <el-input v-model="form.email" />
+        <r-input v-model="form.email" />
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="form.password" />
+        <r-input type="password" v-model="form.password" />
       </el-form-item>
-      <el-button type="primary" class="w-full" @click="onSignup">
+      <r-button type="primary" class="w-full" @click="onSignup">
         注册
-      </el-button>
+      </r-button>
     </el-form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ElForm, ElFormItem, ElInput, ElButton } from 'element-plus'
+import { ElForm, ElFormItem } from 'element-plus'
+import { RInput, RButton } from '@/components'
 import { ref } from 'vue'
 import * as api from '@/api'
 
@@ -29,6 +30,8 @@ const form = ref<api.SignupWithEmailData>({
 })
 
 async function onSignup() {
-  await api.Signup('email', form.value)
+  try {
+    await api.Signup('email', form.value)
+  } catch (e) {}
 }
 </script>

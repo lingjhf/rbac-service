@@ -1,8 +1,8 @@
 <template>
   <el-button v-bind="props" v-on="events" :style="styles">
-    <slot>
-      <template />
-    </slot>
+    <template #default>
+      <slot />
+    </template>
   </el-button>
 </template>
 
@@ -14,6 +14,13 @@ const props = defineProps(buttonProps)
 const emit = defineEmits(buttonEmits)
 
 const styles = computed(() => {
+  if (props.text) {
+    return `
+        --el-fill-color-light: var(--text-btn-hover-bg-color);
+        --el-fill-color: var(--text-btn-hover-bg-color);
+    `
+  }
+
   switch (props.type) {
     case '':
       return `

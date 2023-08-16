@@ -15,6 +15,7 @@ const (
 	GetRootTenantListRouteName = "tenant.get_root_tenant_list"
 	UpdateTenantRouteName      = "tenant.update_tenant"
 	GetTenantByIdRouteName     = "tenant.get_tenant_by_id"
+	GetTenantChildrenRouteName = "tenant.get_tenant_children"
 )
 
 func (s *Service) NewTenantService() Servicer {
@@ -22,6 +23,7 @@ func (s *Service) NewTenantService() Servicer {
 		router.Use(s.RequiredSignin)
 		router.Post("/create", s.RequiredPermission, s.CreateTenant).Name(CreateTenantRouteName)
 		router.Get("/list", s.RequiredPermission, s.GetTenantList).Name(GetTenantListRouteName)
+		router.Get("/children", s.RequiredPermission, s.GetTenantTreeChildren).Name(GetTenantChildrenRouteName)
 		router.Get("/root/list", s.GetRootTenantListByUser).Name(GetRootTenantListRouteName)
 		router.Put("/:id", s.RequiredPermission, s.UpdateTenant).Name(UpdateTenantRouteName)
 		router.Get("/:id", s.RequiredPermission, s.GetTenantById).Name(GetTenantByIdRouteName)
@@ -214,4 +216,15 @@ func (s *Service) GetRootTenantListByUser(c *fiber.Ctx) error {
 		// "total": count,
 	})
 
+}
+
+func (s *Service) GetTenantTreeChildren(c *fiber.Ctx) error {
+	tenantId := c.UserContext().Value(ContextKey("tenantId")).(string)
+	tenantList, err := s.Dao.GetTenantTreeChildrenById(tenantId)
+	if err != nil {
+		return errors.DatabaseError(c)
+	}
+	return errors.SucceededWithData(c, map[string]any{
+		"list": make(models.TenantList, 0).FormTable(tenantList),
+	})
 }

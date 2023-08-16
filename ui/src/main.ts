@@ -6,4 +6,10 @@ import { pinia } from './store'
 import 'uno.css'
 import './styles.css'
 
-createApp(App).use(router).use(pinia).use(i18n).mount('#app')
+const app = createApp(App)
+
+app.use(router).use(pinia).use(i18n).mount('#app')
+
+app.config.errorHandler = (err, instance, info) => {
+  console.log('handle', err, info)
+}
